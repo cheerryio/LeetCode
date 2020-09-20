@@ -1,6 +1,9 @@
 ﻿#include <iostream>
 #include <list>
 #include <vector>
+#include <stack>
+#include <deque>
+#include <limits>
 
 using namespace std;
 
@@ -39,12 +42,54 @@ struct TreeNode {
 
 class Solution {
 public:
-    bool isSymmetric(TreeNode* root) {
+    bool isSymmetryLayer(vector<int> nums) {
+        for (int i = 0; i < nums.size() / 2; i++) {
+            if (nums[i] != nums[nums.size() -1- i])
+                return false;
+        }
+        return true;
+    }
 
+    bool isSymmetric(TreeNode* root) {
+        deque<TreeNode*> queue;
+        TreeNode* node = NULL;
+        vector<int> nums;
+        bool end = true;
+        int size = 0;
+        queue.push_back(root);
+        while (!queue.empty()) {
+            nums.clear();
+            end = true;
+            size = queue.size();
+            for (int i = 0; i < size; i++) {
+                node = queue.front();
+                queue.pop_front();
+                if (node != NULL) {
+                    nums.push_back(node->val);
+                    queue.push_back(node->left);
+                    queue.push_back(node->right);
+                    if (node->left != NULL || node->right != NULL)
+                        end = false;
+                }
+                else {
+                    nums.push_back(INT32_MAX);
+                }
+            };
+            if (!isSymmetryLayer(nums))
+                return false;
+            if (end)
+                return true;
+        }
+        return true;
     }
 };
 
 int main() {
+    TreeNode* root = new TreeNode(1);
+    root->left = new TreeNode(2);
+    root->right = new TreeNode(2);
+    Solution a;
+    cout << a.isSymmetric(root) << endl;
 
     return 0;
 }
